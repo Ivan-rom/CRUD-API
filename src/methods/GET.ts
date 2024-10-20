@@ -22,6 +22,7 @@ export function GET(res: ServerResponse<IncomingMessage>, url?: string) {
       res.statusCode = 400;
       res.statusMessage = "Invalid user Id";
       res.end();
+      return;
     }
 
     getUsersData()

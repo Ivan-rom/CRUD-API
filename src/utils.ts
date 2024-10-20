@@ -16,6 +16,15 @@ export function getUsersData() {
   });
 }
 
+export function saveUsersData(users: User[]) {
+  return new Promise((res, rej) => {
+    fs.writeFile("users.json", JSON.stringify(users, null, 2), function (err) {
+      if (err) rej("Could not save users");
+      res("Successfully saved users");
+    });
+  });
+}
+
 export function defaultNotFound(
   res: ServerResponse<IncomingMessage>,
   url = "Path"

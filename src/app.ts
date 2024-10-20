@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import "dotenv/config";
 import { GET } from "./methods/GET";
+import { POST } from "./methods/POST";
 
 const PORT = process.env.PORT;
 
@@ -11,6 +12,9 @@ const server = createServer((req, res) => {
     case "GET":
       GET(res, url);
       break;
+
+    case "POST":
+      POST(res, req, url);
 
     default:
       break;
