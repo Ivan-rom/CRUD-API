@@ -8,7 +8,7 @@ export function POST(
   req: IncomingMessage,
   url?: string
 ) {
-  if (url !== "/api/users") defaultNotFound(res, url);
+  if (url !== "/api/users") return defaultNotFound(res, url);
 
   const bodyJSONArray: (string | Buffer)[] = [];
   req
@@ -46,10 +46,10 @@ export function POST(
       }
 
       getUsersData()
-        .then((data) => {
+        .then(async (data) => {
           const users = data as User[];
           users.push(user);
-          saveUsersData(users)
+          await saveUsersData(users)
             .then(() => {
               res.write(JSON.stringify(user, null, 2));
             })

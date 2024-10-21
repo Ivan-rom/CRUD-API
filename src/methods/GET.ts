@@ -2,9 +2,15 @@ import { IncomingMessage, ServerResponse } from "node:http";
 import { defaultNotFound, getUsersData } from "../utils";
 import { validate } from "uuid";
 import { User } from "../types";
+import { parse } from "node:path";
 
 export function GET(res: ServerResponse<IncomingMessage>, url?: string) {
-  if (url === "/api/users") {
+  const { dir, base } = parse(url as string);
+
+  if (dir !== "/api" && dir !== "/api/users") return defaultNotFound(res, url);
+  if (dir === "/api" && base !== "users") return defaultNotFound(res, url);
+
+  if (dir === "/api") {
     getUsersData()
       .then((users) => {
         res.write(JSON.stringify(users, null, 2));
@@ -15,10 +21,8 @@ export function GET(res: ServerResponse<IncomingMessage>, url?: string) {
         res.statusMessage = error;
       })
       .finally(() => res.end());
-  } else if (url?.startsWith("/api/users/")) {
-    const [, , , userId] = url.split("/");
-
-    if (!validate(userId)) {
+  } else {
+    if (!validate(base)) {
       res.statusCode = 400;
       res.statusMessage = "Invalid user Id";
       res.end();
@@ -27,7 +31,7 @@ export function GET(res: ServerResponse<IncomingMessage>, url?: string) {
 
     getUsersData()
       .then((users) => {
-        const user = (users as User[]).find((el) => el.id === userId);
+        const user = (users as User[]).find((el) => el.id === base);
 
         if (user) {
           res.write(JSON.stringify(user, null, 2));
@@ -42,7 +46,5 @@ export function GET(res: ServerResponse<IncomingMessage>, url?: string) {
         res.statusMessage = error;
       })
       .finally(() => res.end());
-  } else {
-    defaultNotFound(res, url);
   }
 }

@@ -3,6 +3,7 @@ import "dotenv/config";
 import { GET } from "./methods/GET";
 import { POST } from "./methods/POST";
 import { DELETE } from "./methods/DELETE";
+import { PUT } from "./methods/PUT";
 
 const PORT = process.env.PORT;
 
@@ -22,7 +23,14 @@ const server = createServer((req, res) => {
       DELETE(res, url);
       break;
 
+    case "PUT":
+      PUT(res, req, url);
+      break;
+
     default:
+      res.statusCode = 500;
+      res.statusMessage = "Method is not implemented";
+      res.end();
       break;
   }
 });
