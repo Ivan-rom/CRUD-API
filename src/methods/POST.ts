@@ -46,10 +46,17 @@ export function POST(
       }
 
       getUsersData()
-        .then((users) => {
-          (users as User[]).push(user);
-          saveUsersData(users as User[]);
-          res.write(JSON.stringify(user, null, 2));
+        .then((data) => {
+          const users = data as User[];
+          users.push(user);
+          saveUsersData(users)
+            .then(() => {
+              res.write(JSON.stringify(user, null, 2));
+            })
+            .catch((err) => {
+              res.statusCode = 500;
+              res.statusMessage = err;
+            });
         })
         .catch((error) => {
           res.statusCode = 500;
